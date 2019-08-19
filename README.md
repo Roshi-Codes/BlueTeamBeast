@@ -6,7 +6,8 @@ Powershell Scripts for Blue Teams and Incident Responce.
 This repository contains a series of scripts to aid in a range of blue team tasks across your network.
 
 The scripts use WinRM (Window Remote Management). As with many things there are multiple ways to achive your end goals, with these scripts I have used WinRM across a domain setting. This allows you to use a terminal that is not joined to the domain, for instance a dedicated IR device, to manage Windows assets joined to the domain. 
--!!- At the time of writing there appeared to be issues with WinRM working from some linux deivces so I recommend using a hardened Windows VM dedicated to the task -!!-
+
+- -!!- At the time of writing there appeared to be issues with WinRM working from some linux deivces so I recommend using a hardened Windows VM dedicated to the task -!!-
 
 There are lots of guides for enabling WinRM.
 A quick overview, there are 3 main settings required to be set in Group Policy:
