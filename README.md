@@ -11,9 +11,9 @@ The scripts use WinRM (Window Remote Management). As with many things there are 
 
 There are lots of guides for enabling WinRM.
 A quick overview, there are 3 main settings required to be set in Group Policy:
--Allow remote server management through WinRM
--Enable WinRM service
--Enable predefined Windows Firewall Rule
+- Allow remote server management through WinRM
+- Enable WinRM service
+- Enable predefined Windows Firewall Rule
 
 When first implimenting I used the guide here: http://www.mustbegeek.com/how-to-enable-winrm-via-group-policy/
 
