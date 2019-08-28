@@ -1,11 +1,11 @@
 # BlueTeamBeast
 Powershell Scripts for Blue Teams and Incident Responce.
 
-- Disclaimer: I am GCIH certified (July 2019). However all information here and within this repository is given as a general guide to help fellow incident responders, it is given with NO WARRENTY and NO GUARANTEE of effectiveness. If you are concerned with any advice in here or not sure on anything I suggest doing your own further research or pay an expert to implement a solution for you. -
+- Disclaimer: I am GCIH certified (July 2019). However all information here and within this repository is given as a general guide to help fellow incident responders, it is given with NO WARRENTY and NO GUARANTEE of effectiveness. If you are concerned with any advice in here or not sure on anything I suggest doing your own further research or pay an expert to implement a solution for you.
 
 This repository contains a series of scripts to aid in a range of blue team tasks across your network.
 
-The scripts use WinRM (Window Remote Management). As with many things there are multiple ways to achive your end goals, with these scripts I have used WinRM across a domain setting. This allows you to use a terminal that is not joined to the domain, for instance a dedicated IR device, to manage Windows assets joined to the domain. 
+The scripts use WinRM (Windows Remote Management). As with many things there are multiple ways to achive your end goals, with these scripts I have used WinRM across a domain setting. This allows you to use a terminal that is not joined to the domain, for instance a dedicated IR device, to manage Windows assets joined to the domain. 
 
 - -!!- At the time of writing there appeared to be issues with WinRM working from some linux deivces so I recommend using a hardened Windows VM dedicated to the task -!!-
 
@@ -17,7 +17,8 @@ A quick overview, there are 3 main settings required to be set in Group Policy:
 
 When first implimenting I used the guide here: http://www.mustbegeek.com/how-to-enable-winrm-via-group-policy/
 
-If you are using a device not joined to the domain I suggest giving your device a fixed IP and adding this IP to the WinRM Trusted hosts GP. You must also add the IP ranges of the networks you wish to manage to your IR devices trusted hosts. 
+If you are using a device not joined to the domain I suggest giving your device a fixed IP.
+This fixed IP must be added to the WinRM Trusted hosts GP. You must also add the IP ranges of the networks you wish to manage to your IR devices trusted hosts. 
 The answer given here is a clear guide on how to add trusted hosts using powershell:
 https://stackoverflow.com/questions/21548566/how-to-add-more-than-one-machine-to-the-trusted-hosts-list-using-winrm
 
