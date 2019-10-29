@@ -22,7 +22,7 @@ This fixed IP must be added to the WinRM Trusted hosts GP. You must also add the
 The answer given here is a clear guide on how to add trusted hosts using powershell:
 https://stackoverflow.com/questions/21548566/how-to-add-more-than-one-machine-to-the-trusted-hosts-list-using-winrm
 
-You must use an account with the correct priviledges for the tasks you want to carry out. WinRM will not 'drop creds' on the devices you manage in the same way a direct logon or RDP session will. I highly recommend an account/s dedicated to this purpose. The exact permissions and nature of your accounts should be something you discus with the appropriate members of your team or organisation.
+You must use an account with the correct priviledges for the tasks you want to carry out. WinRM will not 'drop creds' on the devices you manage in the same way a direct logon or RDP session will. I highly recommend an account/s dedicated to this purpose. The exact permissions and nature of your accounts should be something you discuss with the appropriate members of your team or organisation.
 
 
 The common methodology used in these scripts is creating sessions to target machines and then invoking commands or scripts to run in memory on the target. 
