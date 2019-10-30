@@ -22,9 +22,9 @@ It will then make sure the service has been created and if the service is not ru
 
 Warning: Currently the script only tries to start the service!
 If the service is installed but does not start this is currently not handled.
-A list of IPs and splunk forwarder status will be printed at the end and output to a file called "Forwarder_Status.txt"
+A list of IPs and splunk forwarder status will be printed at the end and output to a file called "Forwarder_Status_Log.txt"
 
 
-Planned Update:
+Planned Updates:
 Run the install process as jobs so that the forwarder can be installed on more than one host at once.
 Parse command line parameters instead of the need to edit the ps1 file.
