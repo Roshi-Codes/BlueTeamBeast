@@ -26,4 +26,5 @@ A list of IPs and splunk forwarder status will be printed at the end and output 
 
 
 Planned Update:
-Run the install process as jobs so that more than the forwarder can be installed on more than one host at once.
+Run the install process as jobs so that the forwarder can be installed on more than one host at once.
+Parse command line parameters instead of the need to edit the ps1 file.
