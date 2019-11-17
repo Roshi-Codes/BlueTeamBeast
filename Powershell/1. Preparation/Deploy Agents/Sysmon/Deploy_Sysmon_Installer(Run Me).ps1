@@ -1,5 +1,5 @@
 ﻿Add-Type -AssemblyName System.Windows.Forms
-# This is designed to be executed in conjunction with install_sysmon.ps1 , it will not work without this and a list of target machines.
+# This is designed to be executed in conjunction with Install_Sysmon.ps1 , it will not work without this and a list of target machines.
 
 # This gets the current working directory 
 $loc = Get-Location
@@ -77,7 +77,7 @@ Remove-PSSession -Session $s
 Remove-Job *
 
 # $status is output to both a log file and the terminal to end the script
-$statusPath = $loc.path + "\Forwarders_Status_Log.txt"
+$statusPath = $loc.path + "\Sysmon_Status_Log.txt"
 $status | out-file $statusPath
 echo $status
 echo "End of script"
