@@ -61,7 +61,7 @@ if ($ser = Get-Service SplunkForwarder)
     if ( $ser.Status -ne "Running")
     { Start-Service splunkForwarder }
 } 
-else {Write-Warning "Service still not found, ensure you have the correct permissions to install a service and that all the commandline arguements in the script are correct! Leaving session with $env:COMPUTERNAME.."; Exit}
+else {Write-Error "Service still not found, ensure you have the correct permissions to install a service and that all the commandline arguements in the script are correct! Leaving session with $env:COMPUTERNAME.."; Exit}
 }
 
 
