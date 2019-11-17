@@ -1,7 +1,7 @@
 # BlueTeamBeast
 Powershell Scripts for Blue Teams and Incident Responce.
 
-- Disclaimer: I am GCIH certified (July 2019). However all information here and within this repository is given as a general guide to help fellow incident responders, it is given with NO WARRENTY and NO GUARANTEE of effectiveness. If you are concerned with any advice in here or not sure on anything I suggest doing your own further research or pay an expert to implement a solution for you.
+- Disclaimer: I am GCIH (July 2019) and GCIA (November 2019) certified. However all information here and within this repository is given as a general guide to help fellow incident responders, it is given with NO WARRENTY and NO GUARANTEE of effectiveness. If you are concerned with any advice in here or not sure on anything I suggest doing your own further research or pay an expert to implement a solution for you.
 
 This repository contains a series of scripts to aid in a range of blue team tasks across your network.
 
@@ -28,4 +28,5 @@ You must use an account with the correct priviledges for the tasks you want to c
 The common methodology used in these scripts is creating sessions to target machines and then invoking commands or scripts to run in memory on the target. 
 
 I will start by uploading scripts to help with the preparation phase of the IR cycle. Deploying agents and baselining systems.
-Where possible I will provide scripts for multiple versions of powershell.
+
+Where possible I will provide scripts for multiple versions of powershell on endpoints, ALL scripts must be initiated from a host running at least PSv5. Example: IF your environment still has hosts using PSv2, you will need to have an IR device running PSv5.
