@@ -1,0 +1,3 @@
+These scripts will pull a collection of information from endpoints and output to your chosen folder in CSV format.
+
+The Scipts annotated with a PowerShell version indicate the ENDPOINT PowerShell version they are able to successfully invoke commands against. They must still be executed on a host running at least PowerShell version 5 that will invoke commands against hosts running the older version.
