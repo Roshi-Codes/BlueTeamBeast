@@ -1,12 +1,7 @@
 List of autorun keys / malware persistence Windows registry entries
 
-Is anyone maintaining a complete list of where to check for malware autorun entries and so on?
-
-If yes - you should add this one:
-
 Adding a bat script to HKEY_CURRENT_USER\Software\Microsoft\Command Processor will execute this script using cmd.exe upon reboot.
 
-Other places to look include:
 
 1)  HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\BootExecute 
 2)  HKLM\System\CurrentControlSet\Services  (start value of 0 indicates kernel drivers, which load before kernel initiation) 
@@ -34,45 +29,45 @@ Other places to look include:
 
 Source: https://blog.cylance.com/windows-registry-persistence-part-2-the-run-keys-and-search-order
 
-And some more:
 
-    Startup folders
-        HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders
-        HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
-        HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
-        HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders
-    BootExecute Key
-        Since smss.exe launches before windows subsystem loads, it calls configuration subsystem to load the hive present at HKLM\SYSTEM\CurrentControlSet\Control\hivelist. Also smss.exe will launch anything present in the BootExecute key at HKEY_LOCAL_MACHINE\SYSTEM\ControlSet002\Control\Session Manager. It should always have the value of autocheck autochk*. If there are more values in it, then probably the malware is likely to launch at boot. (source)
-    UserInit keys:
-        HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\UserInit
-    Notify:
-        HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Notify
-    Explorer.exe
-        HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Shell, this key points to explorer.exe(Windows interface) and should only be string explorer.exe rather than complete path as it is supposed to launch from \windows. The boot key at HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\IniFileMapping\system.ini\boot points to the location under Winlogon only. (same source)
-    Services:
-        HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\service
-        Plus services that fail to start can be set to run a program instead
-        HKLM\Software\Microsoft\Windows NT\CurrentVersion\SvcHost
 
-    Browser helper objects BHO
-        HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects
-    AppInit DLLs
-        HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows\AppInit_DLLs
-    File association keys
-        HKEY_LOCAL_MACHINE\Software\Classes\ and HKEY_CLASSES_ROOT\;
-    Other registry keys such as
+Startup folders
+    HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders
+    HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+    HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+    HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders
+BootExecute Key
+    Since smss.exe launches before windows subsystem loads, it calls configuration subsystem to load the hive present at HKLM\SYSTEM\CurrentControlSet\Control\hivelist. Also smss.exe will launch anything present in the BootExecute key at HKEY_LOCAL_MACHINE\SYSTEM\ControlSet002\Control\Session Manager. It should always have the value of autocheck autochk*. If there are more values in it, then probably the malware is likely to launch at boot. (source)
+UserInit keys:
+    HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\UserInit
+Notify:
+    HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Notify
+Explorer.exe
+    HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Shell, this key points to explorer.exe(Windows interface) and should only be string explorer.exe rather than complete path as it is supposed to launch from \windows. The boot key at HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\IniFileMapping\system.ini\boot points to the location under Winlogon only. (same source)
+Services:
+    HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\service
+    Plus services that fail to start can be set to run a program instead
+    HKLM\Software\Microsoft\Windows NT\CurrentVersion\SvcHost
 
-        Autoruns for XP SP3:
+Browser helper objects BHO
+    HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects
+AppInit DLLs
+    HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows\AppInit_DLLs
+File association keys
+    HKEY_LOCAL_MACHINE\Software\Classes\ and HKEY_CLASSES_ROOT\;
+Other registry keys such as
 
-        XPSP3_HKCU_Startup_Locations.txt
-        XPSP3_HKLM_Startup_Locations.txt
+    Autoruns for XP SP3:
 
-        source: https://digital-forensics.sans.org/blog/2010/10/20/digital-forensics-autorun-registry-keys/
+    XPSP3_HKCU_Startup_Locations.txt
+    XPSP3_HKLM_Startup_Locations.txt
 
-    Scheduled tasks:
+    source: https://digital-forensics.sans.org/blog/2010/10/20/digital-forensics-autorun-registry-keys/
 
-        C:\Windows\System32\Tasks
+Scheduled tasks:
 
-        HKLM\SOFTWARE\MICROSOFT\WINDOWS NT\CURRENTVERSION\SCHEDULE\TASKCACHE\TASKS\
+    C:\Windows\System32\Tasks
 
-        HKLM\SOFTWARE\MICROSOFT\WINDOWS NT\CURRENTVERSION\SCHEDULE\TASKCACHE\TREE\
+    HKLM\SOFTWARE\MICROSOFT\WINDOWS NT\CURRENTVERSION\SCHEDULE\TASKCACHE\TASKS\
+
+    HKLM\SOFTWARE\MICROSOFT\WINDOWS NT\CURRENTVERSION\SCHEDULE\TASKCACHE\TREE\
