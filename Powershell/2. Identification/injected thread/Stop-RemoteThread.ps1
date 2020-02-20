@@ -109,7 +109,7 @@ Write-Output "Connecting..."
 $s = New-PSSession -ComputerName $RemoteHost -Credential $creds
 
 foreach ($sesh in $s){
-        Copy-Item $StopThreadLoc -ToSession $HOME\Stop-Thread.ps1
+        Copy-Item $StopThreadLoc -ToSession $sesh $HOME\Stop-Thread.ps1
         Write-Host "Checking $($sesh.Location)"
         Invoke-Command -ComputerName $sesh -ScriptBlock {Import-Module $HOME\Stop-Thread.ps1; Stop-Thread -ThreadId using:$ThreadId ; Remove-Item $HOME\Stop-Thread.ps1}
     }

@@ -145,7 +145,7 @@ Write-Output "Connecting..."
 $s = New-PSSession -ComputerName $computers -Credential $creds
 
 foreach ($sesh in $s){
-        Copy-Item $GetinjectedLoc -ToSession $HOME\Get-InjectedThread.ps1
+        Copy-Item $GetinjectedLoc -ToSession $sesh $HOME\Get-InjectedThread.ps1
         Write-Host "Checking $($sesh.Location)"
         Invoke-Command -ComputerName $sesh -ScriptBlock {Import-Module $HOME\Get-InjectedThread.ps1; Get-InjectedThread; Remove-Item $HOME\Get-InjectedThread.ps1}
     }
