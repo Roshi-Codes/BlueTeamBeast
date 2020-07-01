@@ -1,7 +1,7 @@
 # BlueTeamBeast
 Powershell Scripts for Blue Teams and Incident Responce.
 
-Disclaimer: I am GCIH (July 2019) and GCIA (November 2019) certified. However all information here and within this repository is given as a general guide to help fellow incident responders, it is given with NO WARRENTY and NO GUARANTEE of effectiveness. If you are concerned with any advice in here or not sure on anything I suggest doing your own further research or pay an expert to implement a solution for you.
+Disclaimer: I am GCIH (July 2019) GCIA (November 2019) and GCFE (June 2020) certified. However all information here and within this repository is given as a general guide to help fellow incident responders, it is given with NO WARRENTY and NO GUARANTEE of effectiveness. If you are concerned with any advice in here or not sure on anything, I suggest doing your own further research or pay an expert to implement a solution for you.
 
 This repository contains a series of scripts to aid in a range of blue team tasks across your network.
 
