@@ -15,11 +15,11 @@
    
 .PARAMETER DeploymentServer
    Required. 
-   Specifies the IP address and port number of your deployment server: host:port
+   Specifies the IP address and port number of your Splunk deployment server: host:port
 
 .PARAMETER ReceivingIndexer
    Required.
-   Specifies the IP address and port number of your deployment server: host:port
+   Specifies the IP address and port number of your Splunk deployment server: host:port
                               
 .EXAMPLE
    .\Deploy-SplunkForwarders.ps1 -DeploymentServer 192.168.1.10:8080 -ReceivingIndexer 192.168.1.10:8010
@@ -93,6 +93,7 @@
 
 #----------------------------------------------------[Imports]----------------------------------------------------
 
+Add-Type -AssemblyName PresentationFramework
 Add-Type -AssemblyName System.Windows.Forms
 [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 
@@ -130,10 +131,11 @@ function Get-File(){
    )
    
    $FileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{ 
-      InitialDirectory = [Environment]::GetFolderPath('Desktop') 
+      InitialDirectory = [Environment]::GetFolderPath('Desktop')
+      Filter = $filter
       Title = $title
       }
-   [System.Windows.Forms.MessageBox]::Show($msg,'File Select','ok','information')
+   [System.Windows.Forms.MessageBox]::Show($msg,'File Select','OK','Information')
    $null = $FileBrowser.ShowDialog()
    if (-Not $FileBrowser.FileName){
       $msgbox1 = [System.Windows.Forms.Messagebox]::Show('You must select a file to continue...','File Select','OKCancel','warning')
@@ -161,7 +163,7 @@ function Get-ChildJobs(){
 function Install_Splunk($rindex,$dserv){
         
    # You must replace the arguements with the areguements you want to run on your own splunk forwarder, leave the '/quiet' at the end
-   Start-Process -FilePath $env:SystemDrive\splunkforwarder.msi –Wait -Verbose –ArgumentList "AGREETOLICENSE=yes RECEIVING_INDEXER=`"$($rindex)`" DEPLOYMENT_SERVER=`"$($dserv)`" WINEVENTLOG_APP_ENABLE=1 WINEVENTLOG_SEC_ENABLE=1 WINEVENTLOG_SYS_ENABLE=1 WINEVENTLOG_FWD_ENABLE=1 WINEVENTLOG_SET_ENABLE=1 SPLUNKUSER=admin GENRANDOMPASSWORD=1 ENABLEADMON=1 /quiet"
+   Start-Process -FilePath $env:SystemDrive\splunkforwarder.msi –Wait -Verbose –ArgumentList "AGREETOLICENSE=yes RECEIVING_INDEXER=`"$($rindex)`" DEPLOYMENT_SERVER=`"$($dserv)`" WINEVENTLOG_APP_ENABLE=1 WINEVENTLOG_SEC_ENABLE=1 WINEVENTLOG_SYS_ENABLE=1 WINEVENTLOG_FWD_ENABLE=1 WINEVENTLOG_SET_ENABLE=1 ENABLEADMON=1 /quiet"
 }
 
 #---------------------------------------------------[Execution]---------------------------------------------------
@@ -176,7 +178,7 @@ $computers = (Get-Content -path $hostsfile.FileName)
 #$computers = $computers[1..($computers.Length-1)]  # IF the first line causes an error it is blank and needs to be removed, uncomment the start of this line.
 
 # The user is prompted to select the splunk install msi
-$splunkmsi = filegrab -msg "You must now select your splunk forwarder msi installer file" -filter "Install file (splunkforwarder*.msi)|splunkforwarder*.msi" -title "Select your Splunk Forwarder msi"
+$splunkmsi = Get-File -msg "You must now select your splunk forwarder msi installer file" -filter "Install file (splunkforwarder*.msi)|splunkforwarder*.msi" -title "Select your Splunk Forwarder msi"
 
 # Sessions are created to the computers in $computers, first installing the forwarder, then attempting to get the service status
 Write-Output "Connecting..."
