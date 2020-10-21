@@ -2,7 +2,7 @@
 
 These scripts will pull a collection of information from endpoints and output to your chosen folder in CSV format.
 
-## Get-RemoteInfoPSv2hosts.ps1
+### Get-RemoteInfoPSv2hosts.ps1
 
 * PowerShell V2 is not as featured as V3 onwards. So you should use the PSv2hosts version for remote hosts running PowerShell v2.
 

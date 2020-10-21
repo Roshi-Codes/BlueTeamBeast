@@ -10,11 +10,11 @@ This contains 1 IP address per line of systems you want to deploy on.
 
 The backwards compatible script also requires an arguement for -HostingServer with ip and port that the install files are hosted on
 
-## Deploy-Sysmon.ps1
+### Deploy-Sysmon.ps1
 
 * If your remote hosts are running PSv3+ you can run the standard script, you will need your install files on the same host you run the script from.
 
-## Deploy-SysmomBackwardsCompatible.ps1
+### Deploy-SysmomBackwardsCompatible.ps1
 
 * If you have hosts running PSv2 then you will need to use the backwards compatible script. This will also work on newer versions.
 * However for this you need to host the install files on a http server.
