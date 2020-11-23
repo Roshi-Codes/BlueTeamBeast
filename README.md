@@ -1,9 +1,12 @@
 # BlueTeamBeast
-Powershell Scripts for Blue Teams and Incident Responce.
+Scripts for Blue Teams and Incident Responce.
 
 Disclaimer: I am GCIH (July 2019) GCIA (November 2019) and GCFE (June 2020) certified. However all information here and within this repository is given as a general guide to help fellow incident responders, it is given with NO WARRENTY and NO GUARANTEE of effectiveness. If you are concerned with any advice in here or not sure on anything I suggest doing your own further research or pay an expert to implement a solution for you.
 
 This repository contains a series of scripts to aid in a range of blue team tasks across your network.
+Most scripts will be in PowerShell. The goal is to eventually also add resources that could be used elsewhere such as Splunk and Kibana dashboards.
+
+I will start by uploading scripts to help with the preparation phase of the IR cycle. Deploying agents and baselining systems.
 
 The scripts use WinRM (Windows Remote Management). As with many things there are multiple ways to achive your end goals, with these scripts I have used WinRM across a domain setting. This allows you to use a terminal that is not joined to the domain, for instance a dedicated IR device, to manage Windows assets joined to the domain. 
 
@@ -25,9 +28,6 @@ The answer given here is a clear guide on how to add trusted hosts using powersh
 
 You must use an account with the correct priviledges for the tasks you want to carry out. WinRM will not 'drop creds' on the devices you manage in the same way a direct logon or RDP session will. I highly recommend an account(s) dedicated to this purpose. The exact permissions and nature of your accounts should be something you discuss with the appropriate members of your team or organisation.
 
-
 The common methodology used in these scripts is creating sessions to target machines and then invoking commands or scripts to run in memory on the target. 
-
-I will start by uploading scripts to help with the preparation phase of the IR cycle. Deploying agents and baselining systems.
 
 Where possible I will provide scripts for multiple versions of PowerShell on endpoints, **ALL scripts must be initiated from a host running at least PSv5.** Example: IF your environment still has hosts using PSv2, you will need to have an IR device running PSv5 and you will *probably* need to use the backwards compatible scripts. This is because the PowerShell function Copy-Item failed in testing when copying anything larger than a few hundred KBs in size to a host running PSv2.
