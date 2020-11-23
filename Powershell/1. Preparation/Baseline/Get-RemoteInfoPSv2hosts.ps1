@@ -48,6 +48,7 @@
 
 #----------------------------------------------------[Imports]----------------------------------------------------
 
+Add-Type -AssemblyName PresentationFramework
 Add-Type -AssemblyName System.Windows.Forms
 [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 
@@ -118,7 +119,7 @@ function Get-Creds(){
  }
 
 # Function for retrieving jobs and outputting to a csv
-function jobretrieve(){
+function Save-RemoteJob(){
     [CmdletBinding()]
     
                 Param(                        
@@ -208,40 +209,40 @@ Write-Output "Connected! Querying:"
 
 Write-Output "Processes.."
 $procJob = Invoke-Command -Session $s -ScriptBlock{get-wmiobject win32_process | Select-Object Name,ProcessID,ParentProcessID,CommandLine,ExecutablePath} -AsJob
-jobretrieve -jobs $procJob -filename "processes.csv"
+Save-RemoteJob -jobs $procJob -filename "processes.csv"
 Write-Output "Services.."
 $servJob = Invoke-Command -Session $s -ScriptBlock{Get-Service} -AsJob 
-jobretrieve -jobs $servJob -filename "services.csv"
+Save-RemoteJob -jobs $servJob -filename "services.csv"
 Write-Output "DNS.."
 $dnsJob = Invoke-Command -Session $s -ScriptBlock{ipconfig /displaydns} -AsJob
-jobretrieve -jobs $dnsJob -filename "dns.csv"
+Save-RemoteJob -jobs $dnsJob -filename "dns.csv"
 Write-Output "dll list.."
 $dllJob = Invoke-Command -Session $s -ScriptBlock{get-process -module 2>$null} -AsJob
-jobretrieve -jobs $dllJob -filename "dlllist.csv"
+Save-RemoteJob -jobs $dllJob -filename "dlllist.csv"
 Write-Output "Net shares.."
 $sharesJob = Invoke-Command -Session $s -ScriptBlock{net share} -AsJob
-jobretrieve -jobs $sharesJob -filename "netshare.csv"
+Save-RemoteJob -jobs $sharesJob -filename "netshare.csv"
 Write-Output "Scheduled Tasks.."
 $schJob = Invoke-Command -Session $s -ScriptBlock{schtasks /query} -AsJob
-jobretrieve -jobs $schJob -filename "schtasks.csv"
+Save-RemoteJob -jobs $schJob -filename "schtasks.csv"
 Write-Output "pulling Kerberos tickets.."
 $kerb = Invoke-Command -Session $s -ScriptBlock{klist} -AsJob
-jobretrieve -jobs $kerb -filename "Kerberos.csv"
+Save-RemoteJob -jobs $kerb -filename "Kerberos.csv"
 Write-Output "prefetch items.."
 $prefetch = Invoke-Command -Session $s -ScriptBlock{Get-ChildItem c:\windows\prefetch | Sort-Object LastWriteTime} -AsJob
-jobretrieve -jobs $prefetch -filename "prefetch.csv"
+Save-RemoteJob -jobs $prefetch -filename "prefetch.csv"
 Write-Output "hashing Sys* folders, please be patient.."
 $syshash = Invoke-Command -Session $s -ScriptBlock $function:hasher -ArgumentList $system -AsJob
-jobretrieve -jobs $syshash -filename "system32_hashes.csv"
+Save-RemoteJob -jobs $syshash -filename "system32_hashes.csv"
 Write-Output "Recycle Bin.."
 $recyclehash = Invoke-Command -Session $s -ScriptBlock $function:hasher -ArgumentList $recyclebin -AsJob
-jobretrieve -jobs $recyclehash -filename "recyclebin_hashes.csv"
+Save-RemoteJob -jobs $recyclehash -filename "recyclebin_hashes.csv"
 Write-Output "Temp files.."
 $temphash = Invoke-Command -Session $s -ScriptBlock $function:hasher -ArgumentList $temp  -AsJob
-jobretrieve -jobs $temphash -filename "temp_hashes.csv"
+Save-RemoteJob -jobs $temphash -filename "temp_hashes.csv"
 Write-Output "User Folders.."
 $usrhash = Invoke-Command -Session $s -ScriptBlock $function:hasher -ArgumentList $users  -AsJob
-jobretrieve -jobs $usrhash -filename "users_hashes.csv"
+Save-RemoteJob -jobs $usrhash -filename "users_hashes.csv"
 Write-Output "Pulling logon sessions"
 $logonsessions = Invoke-Command -Session $s -ScriptBlock{
     [CmdletBinding()]
@@ -297,7 +298,7 @@ $logonsessions = Invoke-Command -Session $s -ScriptBlock{
             ComputerName = $_.PSComputerName
         }
     }} -AsJob
-jobretrieve -jobs $logonsessions -filename "logonsessions.csv"
+Save-RemoteJob -jobs $logonsessions -filename "logonsessions.csv"
 
 
 Remove-PSSession -Session $s
