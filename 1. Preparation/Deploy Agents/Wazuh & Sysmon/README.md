@@ -6,7 +6,7 @@ The backwards compatible script also requires an arguement for -HostingServer wi
 You will be prompted to select a file containing a list of target IPs.
 This should contain 1 IP address per line of systems you want to deploy on.
 
-### Deploy-SplunkAndSysmon.ps1
+### Deploy-WazuhAndSysmon.ps1
 
 * If your remote hosts are running PSv3+ you can run the standard script, you will need all of these files on same host you run the script from. You will be prompted to select them:
     * Your Wazuh-Agent msi
@@ -14,7 +14,7 @@ This should contain 1 IP address per line of systems you want to deploy on.
     * EULA.txt (Sys internals EULA)
     * SysmonConfiguration xml file. A popular one is SwiftOnSecurity's configuration found here: <a href="https://github.com/SwiftOnSecurity/sysmon-config" target="_blank">https://github.com/SwiftOnSecurity/sysmon-config</a>
 
-### Deploy-SplunkAndSysmonBackwardsCompatible.ps1
+### Deploy-WazuhAndSysmonBackwardsCompatible.ps1
 
 * If you have hosts running PSv2 then you will need to use the backwards compatible script. This will also work on newer versions.
 * However for this you need to host the Wazuh-Agent msi, Sysmon*.exe, EULA.txt and a SysmonConfiguration xml files on a http server.
