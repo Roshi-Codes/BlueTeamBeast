@@ -7,6 +7,7 @@
    This PowerShell script has been developed to deploy Splunk Universal Forwarders across windows devices using WinRM where the remote host is running PowerShell v2.
    You will require an Windows account that has the correct permissions on all hosts the forwarder will be installed on. Usually a domain account.
    By defult you must provide IP addresses and port numbers for the DEPLOYMENT SERVER, RECEIVING INDEXER and the HOST hosting your splunk msi file. <host:port>
+   You must also provide the Username and Password you want to set for the Splunk Forwarder. This is NOT your Windows/Domain credentials.
    These are provided are parameters when running the scipt. This flag accepts only a single receiver. 
    To specify multiple receivers (i.e. to implement load balancing), configure this setting through the Splunk CLI
    or outputs.conf. Ask your Splunk expert or Splunk documentation at https://docs.splunk.com/Documentation/Forwarder
@@ -21,18 +22,26 @@
    Required. 
    Specifies the IP address and port number of your deployment server: host:port
 
+.PARAMETER SplunkUsername
+   Required.
+   Specifies the local Splunk Admin username to be set on the hosts.
+
+.PARAMETER SplunkPass
+   Required.
+   Specifies the local Splunk Admin password to be set on the hosts.
+
 .PARAMETER HostingServer
    Required. 
    Specifies the IP address and port number of the HTTP server hosting your SplunkForwarder msi
                               
 .EXAMPLE
-   .\Deploy-SplunkForwarders.ps1 -DeploymentServer 192.168.1.10:8080 -ReceivingIndexer 192.168.1.10:8010 -HostingServer 10.10.10.10:80
+   .\Deploy-SplunkForwarders.ps1 -DeploymentServer 192.168.1.10:8080 -ReceivingIndexer 192.168.1.10:8010 -HostingServer 10.10.10.10:80 -SplunkUsername admin -SplunkPass Pa$$w0rd
 
 .EXAMPLE
-   .\Deploy-SplunkForwarders.ps1 -D 192.168.1.10:8080 -R 192.168.1.10:8010 -H 10.10.10.10:80
+   .\Deploy-SplunkForwarders.ps1 -D 192.168.1.10:8080 -R 192.168.1.10:8010 -H 10.10.10.10:80 -U admin -P Pa$$w0rd
 
 .INPUTS
-   You will be prompted for a username and password for the remote hosts.
+   You will also be prompted for a Windows/Domain username and password for the remote hosts.
    A text file containing one IP address per line for each hosts you want to deploy the forwarder to will be required.
    The IP:PORT of the HTTP server hosting your SplunkForwarder msi.
    Deployment and Recieving Indexer IP:PORT combinations for Splunk.
@@ -96,6 +105,21 @@
                            [0-9]|6553[0-5])$')]
          [string]$ReceivingIndexer,
          
+         [Alias("U")]
+         [Parameter(ValueFromPipelineByPropertyName, Mandatory=$True, 
+                     HelpMessage='You must enter the username you wish to set for the local Splunk admin user for Forwarder for management')]
+         [ValidateNotNullorEmpty()]
+         [string]$SplunkUsername,
+
+         # PowerShell SecureString is not used here because it must be provided to the Splunk Forwarder in plaintext at the time of installation. 
+         # Converting a SecureString back to plain text was not introduced until PowerShell v7 and compatibility with v5 is the current aim.
+         [Alias("P")]
+         [Parameter(ValueFromPipelineByPropertyName, Mandatory=$True, 
+                     HelpMessage='You must enter the password you wish to set for the Splunk admin user for the Forwarder for management')]
+         [ValidateNotNullorEmpty()]
+         [ValidateLength(8,256)]
+         [string]$SplunkPass,
+         
          [Alias("H")]
          [Parameter(ValueFromPipelineByPropertyName, Mandatory=$True, 
                      HelpMessage='You must enter an IP and Port. Example: "192.168.1.1:8000"')]
@@ -104,11 +128,12 @@
          [ValidatePattern('^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|`
                            2[0-4][0-9]|25[0-5]):([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2]`
                            [0-9]|6553[0-5])')]
-         [string]$HostingServer         
+         [string]$HostingServer
       )
       
 #----------------------------------------------------[Imports]----------------------------------------------------
 
+Add-Type -AssemblyName PresentationFramework
 Add-Type -AssemblyName System.Windows.Forms
 [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 
@@ -177,8 +202,8 @@ function Get-ChildJobs(){
 
 function Install_Splunk($rindex,$dserv){
         
-        # You must replace the arguements with the areguements you want to run on your own splunk forwarder, leave the '/quiet' at the end
-        Start-Process -FilePath $env:SystemDrive\splunkforwarder.msi –Wait -Verbose –ArgumentList "AGREETOLICENSE=yes RECEIVING_INDEXER=`"$($rindex)`" DEPLOYMENT_SERVER=`"$($dserv)`" WINEVENTLOG_APP_ENABLE=1 WINEVENTLOG_SEC_ENABLE=1 WINEVENTLOG_SYS_ENABLE=1 WINEVENTLOG_FWD_ENABLE=1 WINEVENTLOG_SET_ENABLE=1 SPLUNKUSER=admin GENRANDOMPASSWORD=1 ENABLEADMON=1 /quiet"
+   # You must replace the arguements with the areguements you want to run on your own splunk forwarder, leave the '/quiet' at the end
+   Start-Process -FilePath $env:SystemDrive\splunkforwarder.msi –Wait -Verbose –ArgumentList "AGREETOLICENSE=yes SPLUNKUSERNAME=`"$($splunkU)`" SPLUNKPASSWORD=`"$($splunkP)`" RECEIVING_INDEXER=`"$($rindex)`" DEPLOYMENT_SERVER=`"$($dserv)`" WINEVENTLOG_APP_ENABLE=1 WINEVENTLOG_SEC_ENABLE=1 WINEVENTLOG_SYS_ENABLE=1 WINEVENTLOG_FWD_ENABLE=1 WINEVENTLOG_SET_ENABLE=1 ENABLEADMON=1 PERFMON=network /quiet"
 }
 
 #---------------------------------------------------[Execution]---------------------------------------------------

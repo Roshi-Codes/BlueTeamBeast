@@ -7,6 +7,7 @@
    This PowerShell script has been developed to deploy Splunk Universal Forwarders across windows devices using WinRM.
    You will require an Windows account that has the correct permissions on all hosts the forwarder will be installed on. Usually a domain account.
    By defult you must provide IP addresses and port numbers for the DEPLOYMENT SERVER and RECEIVING INDEXER. <host:port>
+   You must also provide the Username and Password you want to set for the Splunk Forwarder. This is NOT your Windows/Domain credentials.
    These are provided are parameters when running the scipt. This flag accepts only a single receiver. 
    To specify multiple receivers (i.e. to implement load balancing), configure this setting through the Splunk CLI
    or outputs.conf. Ask your Splunk expert or Splunk documentation at https://docs.splunk.com/Documentation/Forwarder
@@ -20,21 +21,28 @@
 .PARAMETER ReceivingIndexer
    Required.
    Specifies the IP address and port number of your Splunk deployment server: host:port
+
+.PARAMETER SplunkUsername
+   Required.
+   Specifies the local Splunk Admin username to be set on the hosts.
+
+.PARAMETER SplunkPass
+   Required.
+   Specifies the local Splunk Admin password to be set on the hosts.
                               
 .EXAMPLE
-   .\Deploy-SplunkForwarders.ps1 -DeploymentServer 192.168.1.10:8080 -ReceivingIndexer 192.168.1.10:8010
+   .\Deploy-SplunkForwarders.ps1 -DeploymentServer 192.168.1.10:8080 -ReceivingIndexer 192.168.1.10:8010 -SplunkUsername admin -SplunkPass Pa$$w0rd
 
 .EXAMPLE
-   .\Deploy-SplunkForwarders.ps1 -D 192.168.1.10:8080 -R 192.168.1.10:8010
+   .\Deploy-SplunkForwarders.ps1 -D 192.168.1.10:8080 -R 192.168.1.10:8010 -U admin -P Pa$$w0rd
 
 .INPUTS
    SplunkForwarder msi is required on the local machine and you will be prompted to select it.
-   You will also be prompted for a username and password for the remote hosts.
+   You will also be prompted for a Windows/Domain username and password for the remote hosts.
    A text file containing one IP address per line for each hosts you want to deploy the forwarder to will be required.
 
 .OUTPUTS
-   Forwarders_Status_Log.txt is saved to the directory you run the script from.
-   This is a log of the IP addresses and SplunkForwarder status.
+   Outputs service status to the console.
 
 .NOTES
    If any hosts in your environment run PowerShell V2 it is likely this script will not work for many of them as the 
@@ -88,7 +96,22 @@
          [ValidatePattern('^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|`
                            2[0-4][0-9]|25[0-5]):([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2]`
                            [0-9]|6553[0-5])$')]
-         [string]$ReceivingIndexer         
+         [string]$ReceivingIndexer,
+         
+         [Alias("U")]
+         [Parameter(ValueFromPipelineByPropertyName, Mandatory=$True, 
+                     HelpMessage='You must enter the username you wish to set for the local Splunk admin user for Forwarder for management')]
+         [ValidateNotNullorEmpty()]
+         [string]$SplunkUsername,
+
+         # PowerShell SecureString is not used here because it must be provided to the Splunk Forwarder in plaintext at the time of installation. 
+         # Converting a SecureString back to plain text was not introduced until PowerShell v7 and compatibility with v5 is the current aim.
+         [Alias("P")]
+         [Parameter(ValueFromPipelineByPropertyName, Mandatory=$True, 
+                     HelpMessage='You must enter the password you wish to set for the Splunk admin user for the Forwarder for management')]
+         [ValidateNotNullorEmpty()]
+         [ValidateLength(8,256)]
+         [string]$SplunkPass         
       )
 
 #----------------------------------------------------[Imports]----------------------------------------------------
@@ -100,7 +123,7 @@ Add-Type -AssemblyName System.Windows.Forms
 #------------------------------------------------[Initialisations]------------------------------------------------
 
 # This gets the current working directory 
-$loc = Get-Location
+# $loc = Get-Location
 
 #---------------------------------------------------[Functions]---------------------------------------------------
 
@@ -163,7 +186,7 @@ function Get-ChildJobs(){
 function Install_Splunk($rindex,$dserv){
         
    # You must replace the arguements with the areguements you want to run on your own splunk forwarder, leave the '/quiet' at the end
-   Start-Process -FilePath $env:SystemDrive\splunkforwarder.msi –Wait -Verbose –ArgumentList "AGREETOLICENSE=yes RECEIVING_INDEXER=`"$($rindex)`" DEPLOYMENT_SERVER=`"$($dserv)`" WINEVENTLOG_APP_ENABLE=1 WINEVENTLOG_SEC_ENABLE=1 WINEVENTLOG_SYS_ENABLE=1 WINEVENTLOG_FWD_ENABLE=1 WINEVENTLOG_SET_ENABLE=1 ENABLEADMON=1 /quiet"
+   Start-Process -FilePath $env:SystemDrive\splunkforwarder.msi –Wait -Verbose –ArgumentList "AGREETOLICENSE=yes SPLUNKUSERNAME=`"$($splunkU)`" SPLUNKPASSWORD=`"$($splunkP)`" RECEIVING_INDEXER=`"$($rindex)`" DEPLOYMENT_SERVER=`"$($dserv)`" WINEVENTLOG_APP_ENABLE=1 WINEVENTLOG_SEC_ENABLE=1 WINEVENTLOG_SYS_ENABLE=1 WINEVENTLOG_FWD_ENABLE=1 WINEVENTLOG_SET_ENABLE=1 ENABLEADMON=1 PERFMON=network /quiet"
 }
 
 #---------------------------------------------------[Execution]---------------------------------------------------
@@ -196,25 +219,10 @@ $installjob = Invoke-Command -Session $s -ScriptBlock $Function:Install_Splunk -
 Wait-Job $installjob | Out-Null
 Get-ChildJobs $installjob
 
-# The hostname and service status will be added to the $status array. The sessions are then closed
-$statusjob = Invoke-Command -Session $s -ScriptBlock {(Get-Service SplunkForwarder).Status} -AsJob
-Wait-Job $statusjob | Out-Null
-
-$status = New-Object System.Collections.Generic.List[System.Object]
-
-foreach ($job in $statusjob.ChildJobs){
-   $job | Out-Null
-   $return = Receive-Job $job
-   
-   if ($return.status -eq 0) {$return = "Service not found!"}
-   else {$return = $return | Select-Object  -Property PSComputerName,Value}
-   $status.Add($return)
+foreach ($sesh in $s){
+   Write-Host $s.ComputerName
+   Invoke-Command -ScriptBlock {Write-Output $env:COMPUTERNAME; Get-Service SplunkForwarder; Get-Service Sysmon*}
 }
-
-# $status is output to both a log file and the terminal to end the script
-$statusPath = $loc.path + "\Forwarders_Status_Log.txt"
-Write-Output $status
-$status | out-file $statusPath
 
 Invoke-Command -Session $s -ScriptBlock {Remove-Item $env:SystemDrive\splunkforwarder.msi} 
 Write-Output "Closing sessions"
