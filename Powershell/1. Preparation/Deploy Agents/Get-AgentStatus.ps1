@@ -42,6 +42,7 @@
 
 #----------------------------------------------------[Imports]----------------------------------------------------
 
+Add-Type -AssemblyName PresentationFramework
 Add-Type -AssemblyName System.Windows.Forms
 [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 
@@ -102,8 +103,10 @@ Write-Output "Connecting..."
 $s = New-PSSession -ComputerName $computers -Credential $creds
 
 
-foreach ($sesh in $s) 
-{
-    Invoke-Command -Session $sesh -ScriptBlock {Write-Output $env:COMPUTERNAME; Get-Service | Where-Object {($_.Name -like "Sysmon64") -OR ($_.Name -like "SplunkForwarder")}}
+foreach ($sesh in $s) {
+   Write-Host $s.ComputerName
+   Invoke-Command -Session $sesh -ScriptBlock {Write-Output $env:COMPUTERNAME; Get-Service | Where-Object {($_.Name -like "Sysmon64")`
+                                                -OR ($_.Name -like "SplunkForwarder")`
+                                                -OR ($_.Name -like "OssecSvc")}}
 
 }
