@@ -47,6 +47,7 @@
 #>
 #----------------------------------------------------[Imports]----------------------------------------------------
 
+Add-Type -AssemblyName PresentationFramework
 Add-Type -AssemblyName System.Windows.Forms
 [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 
@@ -59,7 +60,7 @@ $loc = Get-Location
 
 # The user is asked to select certain files 
 function Get-File(){
-[CmdletBinding()]
+    [CmdletBinding()]
 
         Param(                        
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -132,7 +133,7 @@ $computers = (Get-Content -path $hostsfile)             # The file is read by po
 # The user is promted to select the 3 files needed for Sysmon to install
 $sysmon64 = Get-File -msg "You will now be prompted to select the install .exe file for sysmon" -filter "Install file (Sysmon*.exe)|Sysmon*.exe" -title "Select your Sysmon install .exe"
 $eula = Get-File -msg "You will now be prompted to select the sysmon EULA.txt" -filter "Text File (EULA.txt)|EULA.txt" -title "Select your Sysmon EULA text file"
-$sysmonconfig = Get-File -msg "You will now be prompted to select the sysmonconfig.xml" -filter "xml File (sysmonconfig.xml)|sysmonconfig.xml" -title "Select your sysmon config xml file"
+$sysmonconfig = Get-File -msg "You will now be prompted to select the sysmonconfig.xml" -filter "xml File (sysmonconfig*.xml)|sysmonconfig*.xml" -title "Select your sysmon config xml file"
 
 
 # Sessions are created to the computers in $computers, first copying the files over then installing the sysmon service, then attempting to get the service status
