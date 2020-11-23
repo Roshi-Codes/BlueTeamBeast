@@ -74,6 +74,7 @@
 
 #----------------------------------------------------[Imports]----------------------------------------------------
 
+Add-Type -AssemblyName PresentationFramework
 Add-Type -AssemblyName System.Windows.Forms
 [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 
@@ -145,9 +146,9 @@ Write-Output "Connecting..."
 $s = New-PSSession -ComputerName $computers -Credential $creds
 
 foreach ($sesh in $s){
-        Copy-Item $GetinjectedLoc -ToSession $sesh $HOME\Get-InjectedThread.ps1
+        Copy-Item $GetinjectedLoc -ToSession $sesh $env:SystemDrive\Get-InjectedThread.ps1
         Write-Host "Checking $($sesh.Location)"
-        Invoke-Command -ComputerName $sesh -ScriptBlock {Import-Module $HOME\Get-InjectedThread.ps1; Get-InjectedThread; Remove-Item $HOME\Get-InjectedThread.ps1}
+        Invoke-Command -Session $sesh -ScriptBlock {Import-Module $env:SystemDrive\Get-InjectedThread.ps1; Get-InjectedThread; Remove-Item $env:SystemDrive\Get-InjectedThread.ps1}
     }
 
-Remove-PSSession $sessions
+Remove-PSSession -Session $s
