@@ -43,6 +43,7 @@
 
 #----------------------------------------------------[Imports]----------------------------------------------------
 
+Add-Type -AssemblyName PresentationFramework
 Add-Type -AssemblyName System.Windows.Forms
 [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 
@@ -95,14 +96,14 @@ function Get-Creds(){
 # This function gets the processes from an endpoint and checks if any match with the processes in $processes below
 function Find-Process
         {
-        # $processes is an array of processes you want to search for, add and remove as needed
+        # $processes is an array of processes you want to search for.
         Write-Output "Checking processes on $($env:COMPUTERNAME))"
         Foreach ($process in $processes)
             {
             if($null -ne (Get-Process $process -ErrorAction SilentlyContinue)) 
                 {
                 # Uncomment the line below to stop any found processes. BE CAREFUL killing processes
-                ####Stop-Process -Name $process -Force
+                ####Stop-Process -Name $process -Force  ### WARNING ARE YOU SURE YOU WANT TO UNCOMMENT THIS LINE?
                 Write-Output "Process found on $env:COMPUTERNAME!!!!"
                 }
         }
