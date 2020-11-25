@@ -6,6 +6,7 @@
 .DESCRIPTION
     This PowerShell script has been developed to deploy Splunk Universal Forwarders and Sysmon monitoring across windows devices using WinRM.
     It will add the nessasary lines to Splunk's inputs.conf to gather Sysmon generated event logs.
+    It will also add lines to inputs.conf needed to gather PowerShell event logs created in Microsoft-Windows-PowerShell/Operational when logging is enabled.
     You will need to update props.conf and transforms.conf to take full advantage of Sysmon logs in Splunk.
     These will need changing on the Splunk Server and they may need to be created in "/opt/splunk/etc/system/local" Example: 
     https://www.splunk.com/en_us/blog/tips-and-tricks/monitoring-network-traffic-with-sysmon-and-splunk.html
@@ -276,14 +277,18 @@ Get-ChildJobs $installjob
 
 # Add the required config to gather Sysmon events to inputs.conf on the remote hosts, then restart the Splunk Forwarder to load the new inputs.conf file.
 Invoke-Command -Session $s -ScriptBlock {
-    add-content -Path "$env:SystemDrive\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf" `
-    -Value "`n`n[WinEventLog://Microsoft-Windows-Sysmon/Operational]";`
-    add-content -Path "$env:SystemDrive\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf" `
-    -Value "disabled = false";`
-    add-content -Path "$env:SystemDrive\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf" `
-    -Value "renderXml = true";`
-    Set-Location -Path "$env:SystemDrive\Program Files\SplunkUniversalForwarder\bin\"; .\splunk.exe restart
- }
+      add-content -Path "$env:SystemDrive\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf" `
+      -Value "`n`n[WinEventLog://Microsoft-Windows-Sysmon/Operational]";`
+      add-content -Path "$env:SystemDrive\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf" `
+      -Value "disabled = false";`
+      add-content -Path "$env:SystemDrive\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf" `
+      -Value "renderXml = true";`
+      add-content -Path "$env:SystemDrive\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf" `
+      -Value "`n[WinEventLog://Microsoft-Windows-PowerShell/Operational]";`
+      add-content -Path "$env:SystemDrive\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf" `
+      -Value "disabled = false";`
+      Set-Location -Path "$env:SystemDrive\Program Files\SplunkUniversalForwarder\bin\"; .\splunk.exe restart
+   }
 
 foreach ($sesh in $s){
     Write-Host $s.ComputerName
